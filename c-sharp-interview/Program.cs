@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace c_sharp_interview
 {
+    [Author("Ray Winkelman")]
     class Program
     {
         static void Main(string[] args)
         {
             MostDerived o = new MostDerived();
-            o.Print("text");
+            o.Print();
+            o.GetCaller();
 
             Console.Read();
         }
@@ -23,10 +22,10 @@ namespace c_sharp_interview
         protected Base()
         {
             Console.WriteLine("base constructor.");
-            Print("null");
+            Print();
         }
 
-        public virtual void Print(string message)
+        public virtual void Print()
         {
             Console.WriteLine("base print method.");
         }
@@ -39,7 +38,7 @@ namespace c_sharp_interview
             Console.WriteLine("medial constructor.");
         }
 
-        public override void Print(string message)
+        public override void Print()
         {
             Console.WriteLine("medial print method.");
         }
@@ -53,18 +52,39 @@ namespace c_sharp_interview
         public MostDerived()
         {
             Console.WriteLine("most derived constructor.");
-            instanceInit = " wow, I was instance initialized.";
+            instanceInit = " wow, I was also instance initialized.";
         }
 
-        public override void Print(string message)
+        public override void Print()
         {
             Console.WriteLine("most derived print method." + typeInit + instanceInit);
         }
 
-        public void GetCaller([CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "")
+        public void GetCaller([CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             Console.WriteLine(memberName);
-            Console.WriteLine(sourceFilePath);
+            Console.WriteLine(Path.GetFileName(sourceFilePath));
+            Console.WriteLine("line: " + sourceLineNumber);
         }
+    }
+
+    // Attribute usage.
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AuthorAttribute : Attribute
+    {
+        public AuthorAttribute(string name)
+        {
+            this.name = name;
+        }
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
+        private string name;
     }
 }
